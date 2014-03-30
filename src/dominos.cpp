@@ -45,10 +45,10 @@ namespace cs296
   
   dominos_t::dominos_t()
   {
-    //Ground
-    /*! \var b1 
+    /*//Ground
+    /! \var b1 
      * \brief pointer to the body ground 
-     */ 
+      
     b2Body* b1;  
     {
       
@@ -156,44 +156,147 @@ namespace cs296
 	  spherebody->CreateFixture(&ballfd);
 	}
     }
-
-    //The pulley system
+*/
+    /**Skeleton (static system)
+     * */
     {
       b2BodyDef *bd = new b2BodyDef;
-      bd->type = b2_dynamicBody;
-      bd->position.Set(-10,15);
+      //bd->type = b2_staticBody;
+      bd->position.Set(0,20);
       bd->fixedRotation = true;
       
       //The open box
+      
       b2FixtureDef *fd1 = new b2FixtureDef;
       fd1->density = 10.0;
       fd1->friction = 0.5;
       fd1->restitution = 0.f;
-      fd1->shape = new b2PolygonShape;
-      b2PolygonShape bs1;
-      bs1.SetAsBox(2,0.2, b2Vec2(0.f,-1.9f), 0);
+      fd1->shape = new b2EdgeShape;
+      b2EdgeShape bs1;
+      bs1.Set(b2Vec2(-30.f, 7.f), b2Vec2(0.f,7.f));
       fd1->shape = &bs1;
+      
       b2FixtureDef *fd2 = new b2FixtureDef;
       fd2->density = 10.0;
       fd2->friction = 0.5;
       fd2->restitution = 0.f;
-      fd2->shape = new b2PolygonShape;
-      b2PolygonShape bs2;
-      bs2.SetAsBox(0.2,2, b2Vec2(2.0f,0.f), 0);
+      fd2->shape = new b2EdgeShape;
+      b2EdgeShape bs2;
+      bs2.Set(b2Vec2(-30.f, 4.f), b2Vec2(0.f, 4.f));
       fd2->shape = &bs2;
+      
       b2FixtureDef *fd3 = new b2FixtureDef;
       fd3->density = 10.0;
       fd3->friction = 0.5;
       fd3->restitution = 0.f;
       fd3->shape = new b2PolygonShape;
       b2PolygonShape bs3;
-      bs3.SetAsBox(0.2,2, b2Vec2(-2.0f,0.f), 0);
+      bs3.SetAsBox(15,0.2, b2Vec2(-15.f,0.f), 0);
       fd3->shape = &bs3;
+      
+      
+      b2FixtureDef *fd4 = new b2FixtureDef;
+      fd4->density = 10.0;
+      fd4->friction = 0.5;
+      fd4->restitution = 0.f;
+      fd4->shape = new b2PolygonShape;
+      b2PolygonShape bs4;
+      bs4.SetAsBox(0.2,2, b2Vec2(-8.f,-2.f), 0);
+      fd4->shape = &bs4;
+      
+      b2FixtureDef *fd5 = new b2FixtureDef;
+      fd5->density = 10.0;
+      fd5->friction = 0.5;
+      fd5->restitution = 0.f;
+      fd5->shape = new b2PolygonShape;
+      b2PolygonShape bs5;
+      bs5.SetAsBox(4, 0.2, b2Vec2(-4.f,-4.f), 0);
+      fd5->shape = &bs5;
+       
+      b2FixtureDef *fd6 = new b2FixtureDef;
+      fd6->density = 10.0;
+      fd6->friction = 0.5;
+      fd6->restitution = 0.f;
+      fd6->shape = new b2PolygonShape;
+      b2PolygonShape bs6;
+      bs6.SetAsBox(0.2,7.5, b2Vec2(0.f,-7.5f), 0);
+      fd6->shape = &bs6;
+      
+      b2FixtureDef *fd7 = new b2FixtureDef;
+      fd7->density = 10.0;
+      fd7->friction = 0.5;
+      fd7->restitution = 0.f;
+      fd7->shape = new b2PolygonShape;
+      b2PolygonShape bs7;
+      bs7.SetAsBox(4,0.2, b2Vec2(4.0f,-15.f), 0);
+      fd7->shape = &bs7;
+      
+      b2FixtureDef *fd8 = new b2FixtureDef;
+      fd8->density = 10.0;
+      fd8->friction = 0.5;
+      fd8->restitution = 0.f;
+      fd8->shape = new b2PolygonShape;
+      b2PolygonShape bs8;
+      bs8.SetAsBox(0.2,7.5, b2Vec2(8.f,-7.5f), 0);
+      fd8->shape = &bs8;
+      
+      b2FixtureDef *fd9 = new b2FixtureDef;
+      fd9->density = 10.0;
+      fd9->friction = 0.5;
+      fd9->restitution = 0.f;
+      fd9->shape = new b2PolygonShape;
+      b2PolygonShape bs9;
+      bs9.SetAsBox(0.3,2, b2Vec2(-6.f,2.f), 0);
+      fd9->shape = &bs9;
+      
+      b2FixtureDef *fd10 = new b2FixtureDef;
+      fd10->density = 10.0;
+      fd10->friction = 0.5;
+      fd10->restitution = 0.f;
+      fd10->shape = new b2EdgeShape;
+      b2EdgeShape bs10;
+      bs10.Set(b2Vec2(-30.f, 4.f), b2Vec2(-30.f, 3.f));
+      fd10->shape = &bs10;
        
       b2Body* box1 = m_world->CreateBody(bd);
       box1->CreateFixture(fd1);
       box1->CreateFixture(fd2);
       box1->CreateFixture(fd3);
+      box1->CreateFixture(fd4);
+      box1->CreateFixture(fd5);
+      box1->CreateFixture(fd6);
+      box1->CreateFixture(fd7);
+      box1->CreateFixture(fd8);
+      box1->CreateFixture(fd9);
+      box1->CreateFixture(fd10);
+  }
+  
+  /** dynamic part
+   * */
+   {
+	  b2BodyDef *bd = new b2BodyDef;
+      bd->type = b2_dynamicBody;
+      bd->position.Set(0,20);
+      bd->fixedRotation = true;
+      
+      b2FixtureDef *fd1 = new b2FixtureDef;
+      fd1->density = 10.0;
+      fd1->friction = 0;
+      fd1->restitution = 1.f;
+      fd1->shape = new b2PolygonShape;
+      b2PolygonShape bs1;
+      bs1.SetAsBox(4,2, b2Vec2(-26.f,2.f), 0);
+      fd1->shape = &bs1;
+       
+      b2Body* box1 = m_world->CreateBody(bd);
+      box1->CreateFixture(fd1);
+      box1->SetLinearVelocity(b2Vec2(3,0));
+      
+     }
+	   
+	   
+	   
+  /*
 
       //The bar
       bd->position.Set(10,15);	
@@ -312,7 +415,7 @@ namespace cs296
       fd3->shape = new b2PolygonShape;
       fd3->shape = &shape2;
       body3->CreateFixture(fd3);
-    }
+    }*/
   }
 
   sim_t *sim = new sim_t("Dominos", dominos_t::create);
