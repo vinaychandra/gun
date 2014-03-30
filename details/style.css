@@ -1,0 +1,47 @@
+body{
+background-image:url("images/index1.jpeg");
+background-repeat:no-repeat;
+background-size:1024pt 640pt;
+}
+
+#links a{
+    position:relative;
+    background-color:black;
+    top:70%; 
+    left:20%;
+    padding-left: 6%;
+    padding-right: 6%;
+    padding-top: 0.5%;
+    padding-bottom: 0.5%;
+    color:white;
+    text-decoration:none;
+}
+
+#links a:hover{
+    background-color: white;
+    color:blue;
+}
+
+#intro{
+background-color:rgba(255,255,255,0.6);
+position:fixed;
+padding-bottom:10%;
+width:50%;
+left:20%;
+top:18%;
+}
+
+#contact{
+background-color:rgba(255,255,255,0.6);
+position:fixed;
+width:50%;
+left:75%;
+bottom:68%;
+}
+#wel{
+position:relative;
+font-family:PTSans;
+font-size:20pt;
+color:white;
+width:10%;
+}
