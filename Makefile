@@ -12,14 +12,9 @@ SED	= sed
 DOXYGEN = doxygen
 AR	= ar
 
-#Shared Libraries
-SHARED_LIB = TRUE
-#Shared Library name
-MY_LIB = libCS296test
 ######################################
 # Project Name (generate executable with this name)
 TARGET = cs296_31_exe
-TARGET2 = cs296_31_exelib
 TARGET_PATH = $(BINDIR)/$(TARGET)
 TARGET_PATH2 = $(BINDIR)/$(TARGET2)
 
@@ -74,16 +69,12 @@ SRCS := $(wildcard $(SRCDIR)/*.cpp)
 INCS := $(wildcard $(SRCDIR)/*.hpp)
 OBJS := $(SRCS:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
 
-SRCS2 := $(wildcard $(SRCDIR)/[!main]*.cpp)
-INCS2 := $(wildcard $(SRCDIR)/[!main]*.hpp)
-OBJS2 := $(SRCS2:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
-
 MAIN_OBJ  = $(OBJDIR)/main.o
 
 #####################################
 .PHONY: all setup doc clean distclean
 
-all: setup exelib
+all: setup exe
 
 setup:
 	@$(ECHO) "Setting up compilation..."
@@ -153,43 +144,3 @@ distclean: clean
 	@$(RM) -rf $(BINDIR) $(DOCDIR)/html $(LIBDIR)
 	@$(RM) -Rf $(BOX2D_SRCDIR)/Box2D
 	@$(RM) -Rf $(BOX2D_ROOT)/lib $(BOX2D_ROOT)/include
-
-usestatic: $(OBJS)
-ifeq (FALSE, $(SHARED_LIB))
-	@$(ECHO) "Creating a Static Library..."
-	@$(AR) -rvc $(LIBDIR)/$(MY_LIB).a $(OBJS2)
-	@$(ECHO) "Creation done"
-endif
-
-
-usesdynamic: $(OBJS)
-ifeq (TRUE, $(SHARED_LIB))
-	@$(ECHO) "Creating a dynamic Library..."
-	@$(CC) -shared -o $(LIBDIR)/$(MY_LIB).so $(OBJS2)
-	@$(ECHO) "Creation done"
-endif 
-
-exelib: setup usestatic usesdynamic
-	@$(PRINTF) "$(MESG_COLOR)Building executable:$(NO_COLOR) $(FILE_COLOR) %16s$(NO_COLOR)" "$(notdir $(TARGET_PATH2))"
-ifeq (FALSE, $(SHARED_LIB))
-#static libraries
-	@$(CC) -o $(TARGET_PATH2) $(LDFLAGS) $(MAIN_OBJ) $(LIBDIR)/$(MY_LIB).a $(LIBS) -L$(LIBDIR) 2> temp.log || touch temp.err
-	@if test -e temp.err; \
-	then $(PRINTF) $(ERR_FMT) $(ERR_STRING) && $(CAT) temp.log; \
-	elif test -s temp.log; \
-	then $(PRINTF) $(WARN_FMT) $(WARN_STRING) && $(CAT) temp.log; \
-	else $(PRINTF) $(OK_FMT) $(OK_STRING); \
-	fi;
-	@$(RM) -f temp.log temp.e
-else
-#dynamic libraries
-	@$(CC) -o $(TARGET_PATH2) $(MAIN_OBJ) $(LDFLAGS) $(LIBDIR)/$(MY_LIB).so $(LIBS)   2> temp.log || touch temp.err
-	@if test -e temp.err; \
-	then $(PRINTF) $(ERR_FMT) $(ERR_STRING) && $(CAT) temp.log; \
-	elif test -s temp.log; \
-	then $(PRINTF) $(WARN_FMT) $(WARN_STRING) && $(CAT) temp.log; \
-	else $(PRINTF) $(OK_FMT) $(OK_STRING); \
-	fi;
-	@$(RM) -f temp.log temp.e
-endif
-	@$(PRINTF) "$(MESG_COLOR)Build complete:$(NO_COLOR) $(FILE_COLOR) %21s$(NO_COLOR)\n" "$(notdir $(TARGET_PATH2))"
