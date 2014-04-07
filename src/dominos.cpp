@@ -165,15 +165,6 @@ namespace cs296
       f7->filter.maskBits = 0x0010;
       f7->filter.categoryBits = 0x0017;
       
-      //b2FixtureDef *fd9 = new b2FixtureDef;
-      //fd9->density = 10.0;
-      //fd9->friction = 0.5;
-      //fd9->restitution = 0.f;
-      //fd9->shape = new b2PolygonShape;
-      //b2PolygonShape bs9;
-      //bs9.SetAsBox(0.2,9., b2Vec2(13.0f,-6.f), 0);
-      //fd9->shape = &bs9;
-      
       b2FixtureDef *f4 = new b2FixtureDef;
       f4->density = 10.0;
       f4->friction = 0.5;
@@ -220,22 +211,8 @@ namespace cs296
       bs11.Set(b2Vec2(-30.f, 4.f), b2Vec2(-30.f, 3.f));
       fd11->shape = &bs11;
       
-      //b2FixtureDef *fd11 = new b2FixtureDef;
-      //fd11->density = 10.0;
-      //fd11->friction = 0.5;
-      //fd11->restitution = 0.f;
-      //fd11->shape = new b2PolygonShape;
-      //b2PolygonShape bs11;
-      //b2Vec2 vert[3];
-      //vert[0].Set(7.8f,0.f);
-      //vert[1].Set(7.8f,3.9f);
-      //vert[2].Set(11.f,3.9f);
-      //bs11.Set(vert,3);
-      //fd11->shape = &bs11;
-       
       b2Body* box1 = m_world->CreateBody(bd);
       box1->CreateFixture(f1);
-    //  box1->CreateFixture(window);
       box1->CreateFixture(f2);
       box1->CreateFixture(f3);
       box1->CreateFixture(f4);
@@ -249,7 +226,7 @@ namespace cs296
       box1->CreateFixture(ac2);
       box1->CreateFixture(fd11);
      
- //     box1->CreateFixture(fd11);
+
   }
   
   /** dynamic part
@@ -308,7 +285,7 @@ namespace cs296
 	  fd4->shape = &quad2;
 	  fd4->filter.categoryBits = 0x0010;
 	  fd4->filter.maskBits = 0x0111;
-	  
+	  //stick fixture
 	  b2FixtureDef *fd5 = new b2FixtureDef;
       fd5->density = 50.0;
       fd5->friction = 0;
@@ -324,14 +301,15 @@ namespace cs296
 	  fd5->shape = &pent;
 	  fd5->filter.categoryBits = 0x0110;
 	  fd5->filter.maskBits = 0x1010;
-	  
+	  //stick body
 	  b2BodyDef *stickbd = new b2BodyDef;
       stickbd->type = b2_dynamicBody;
       stickbd->position.Set(0,20);
       stickbd->fixedRotation = true;
-  
-	    
-  
+	  b2Body* stick = m_world->CreateBody(stickbd);
+      stick->CreateFixture(fd5);
+      stick->SetLinearVelocity(b2Vec2(-20,0));
+      //arbit invisible body
 	  b2BodyDef *invibd = new b2BodyDef;
       invibd->type = b2_staticBody;
       invibd->position.Set(0-6,20+2);
@@ -344,18 +322,14 @@ namespace cs296
       box1->CreateFixture(fd3);
       box1->CreateFixture(fd4);
       box1->SetLinearVelocity(b2Vec2(4,0));
-      
-      b2Body* stick = m_world->CreateBody(stickbd);
-      stick->CreateFixture(fd5);
-      stick->SetLinearVelocity(b2Vec2(-20,0));
-      
+      //spring between stick and invisible point
       b2DistanceJointDef internal;
       internal.Initialize(box1, stick, b2Vec2(9.8,25.3), stick->GetWorldCenter());
       internal.collideConnected=true;
       internal.frequencyHz = 1.0f;
       internal.dampingRatio = 1.0f;
       m_world->CreateJoint(&internal);
-      
+      //spring necessary for the reload part.
       b2DistanceJointDef spring1;
       spring1.Initialize(box1, invi, b2Vec2(-22,22), invi->GetWorldCenter());
       spring1.collideConnected=true;
@@ -364,11 +338,10 @@ namespace cs296
       m_world->CreateJoint(&spring1);
         
      }
-     //stick
      
 	  //bullets
 	   {
-	      //shell
+	      //shell fixture
 		  b2FixtureDef *sf1 = new b2FixtureDef;
 		  sf1->density = 5.0;
 		  sf1->friction = 0.3;
@@ -409,7 +382,7 @@ namespace cs296
 		  sf3->shape = &s3;  
 		  sf3->filter.categoryBits = 0x0010;
 		  
-		  
+		  //bullet fixture
 		  b2FixtureDef *bf = new b2FixtureDef;
 		  bf->density = 5.0;
 		  bf->friction = 5.0;
@@ -425,7 +398,7 @@ namespace cs296
 		  bs.Set(vert,5);
 		  bf->shape = &bs;
 		  bf->filter.categoryBits = 0x0010;
-		  
+		  //creating bullet bodies
 	  for(int i=0; i<1 ;i++){
 		  b2BodyDef *bulletDef = new b2BodyDef;
           bulletDef->type = b2_dynamicBody;
@@ -442,15 +415,6 @@ namespace cs296
 		  shell->CreateFixture(sf1);
 		  shell->CreateFixture(sf2);
 		  shell->CreateFixture(sf3);
-		  
-		  //b2DistanceJointDef stuff;
-		  //stuff.Initialize(bullet, shell, bullet->GetWorldCenter(), shell->GetWorldCenter());
-		  //stuff.collideConnected=true;
-		  //stuff.frequencyHz = 10.f;
-		  //m_world->CreateJoint(&stuff);
-		  
-      
-		  
 		  
 	}
 		  b2BodyDef *bulletDef = new b2BodyDef;
@@ -513,7 +477,7 @@ namespace cs296
   }
   //trigger part
   {
-	  	
+	  	//the ground part
 			b2BodyDef bd;
 			b2Body *ground = m_world->CreateBody(&bd);
 
@@ -522,13 +486,13 @@ namespace cs296
 			ground->CreateFixture(&shape, 0.0f);
 
 			
-	
+	//circle gear in between
 			b2RevoluteJoint* m_joint1;
 			b2PrismaticJoint* m_joint2;
 			b2PrismaticJoint* m_joint3;
 			b2CircleShape circle1;
 			circle1.m_radius = 1.0f;
-
+	//shapes
 			b2PolygonShape rod1,rod1weld,springrest,verticallong,trigger;
 			b2Vec2 vert[4];
 			vert[0].Set(0.f,0.f);
@@ -555,7 +519,7 @@ namespace cs296
 			
 			b2PolygonShape rod2;
 			rod2.SetAsBox(3.f, 0.5f);
-		
+	//circular gear body	
 			t1.type = b2_dynamicBody;
 			t1.position.Set(4.0f, 20.0f);
 			b2Body* body1 = m_world->CreateBody(&t1);
@@ -565,7 +529,7 @@ namespace cs296
 			tf1->filter.categoryBits=0x0100;
 			tf1->filter.maskBits=0x0100;
 			body1->CreateFixture(tf1);
-
+	//hidden static body in trigger part
 			b2BodyDef t4;
 			t4.type = b2_staticBody;
 			t4.position.Set(7.f, 21.f);
@@ -578,7 +542,7 @@ namespace cs296
 			hidden->CreateFixture(tf4);
 			//hidden->CreateFixture(&springrest, 1.0f);
 			
-			
+	//revolute joint of circular gear
 			b2RevoluteJointDef jd1;
 			jd1.bodyA = hidden;
 			jd1.bodyB = body1;
@@ -586,7 +550,7 @@ namespace cs296
 			jd1.localAnchorB = body1->GetLocalPoint(t1.position);
 			jd1.referenceAngle = body1->GetAngle() - ground->GetAngle();
 			m_joint1 = (b2RevoluteJoint*)m_world->CreateJoint(&jd1);
-			
+	//trigger
 			t2.type = b2_dynamicBody;
 			t2.position.Set(4.5f, 21.f);
 			body2 = m_world->CreateBody(&t2);
@@ -609,7 +573,7 @@ namespace cs296
 			tf23->filter.maskBits=0x0100;
 			body2->CreateFixture(tf23);
 
-
+	//prismatic joint for trigger rod
 			b2PrismaticJointDef jd2;
 			jd2.Initialize(hidden, body2, t2.position, b2Vec2(1.0f, 0.0f));
 			jd2.lowerTranslation = -5.0f;
@@ -617,7 +581,7 @@ namespace cs296
 			jd2.enableLimit = true;
 
 			m_joint2 = (b2PrismaticJoint*)m_world->CreateJoint(&jd2);
-			
+	//the other rod in the gear
 			b2BodyDef t3;
 			t3.type = b2_dynamicBody;
 			t3.position.Set(6.f, 18.5f);
@@ -629,7 +593,7 @@ namespace cs296
 			tf3->filter.maskBits=0x0100;
 			tf3->filter.categoryBits=0x0100;
 			body3->CreateFixture(tf3);
-
+	//prismatic joint for the other rod
 			b2PrismaticJointDef jd3;
 			jd3.Initialize(hidden, body3, t3.position, b2Vec2(-1.0f, 0.0f));
 			jd3.lowerTranslation = -5.0f;
@@ -637,7 +601,7 @@ namespace cs296
 			jd3.enableLimit = true;
 
 			m_joint3 = (b2PrismaticJoint*)m_world->CreateJoint(&jd3);
-
+	//gear joint for circle and trigger
 			b2GearJointDef jd4;
 			jd4.bodyA = body1;
 			jd4.bodyB = body2;
@@ -645,7 +609,7 @@ namespace cs296
 			jd4.joint2 = m_joint2;
 			jd4.ratio = -1.0f  / circle1.m_radius;
 			(b2GearJoint*)m_world->CreateJoint(&jd4);
-
+	//gear joint for the rod and circle
 			b2GearJointDef jd5;
 			jd5.bodyA = body1;
 			jd5.bodyB = body3;
@@ -655,14 +619,14 @@ namespace cs296
 			(b2GearJoint*)m_world->CreateJoint(&jd5);
 			
 			body2->SetLinearVelocity(b2Vec2(30,0));
-			
+	//spring between hidden static part and trigger
 		    b2DistanceJointDef spring3;
 			spring3.Initialize(body2, hidden ,b2Vec2(1.f,22.f), b2Vec2(8.f,22.f));
 			spring3.collideConnected=true;
 			spring3.frequencyHz = 0.2f;
 			spring3.dampingRatio = 1.0f;
 			m_world->CreateJoint(&spring3);
-			
+	// lock 
 			b2BodyDef t5;
 			t5.type = b2_dynamicBody;
 			t5.position.Set(10.f, 19.5f);
@@ -675,7 +639,7 @@ namespace cs296
 			tf5->filter.maskBits=0x0100;
 			tf5->filter.categoryBits=0x0100;
 			lock->CreateFixture(tf5);
-			
+	//revolute joint between lock and hidden static part
 			b2RevoluteJointDef jd8;
 			jd8.bodyA = hidden;
 			jd8.bodyB = lock;
@@ -685,7 +649,7 @@ namespace cs296
 			jd8.referenceAngle = lock->GetAngle() - hidden->GetAngle();
 			jd8.upperAngle = 0;
 		    (b2RevoluteJoint*)m_world->CreateJoint(&jd8);
-			
+	//the hitter part
 			b2BodyDef t6;
 			t6.type = b2_dynamicBody;
 			t6.position.Set(15.f, 20.5f);
@@ -712,7 +676,7 @@ namespace cs296
 				
 			hitter->CreateFixture(tf61);
 			hitter->CreateFixture(tf62);
-			
+	//revolute joint about hitter
 			b2RevoluteJointDef jd9;
 			jd9.bodyA = hidden;
 			jd9.bodyB = hitter;
@@ -720,7 +684,7 @@ namespace cs296
 			jd9.localAnchorB.Set(0.,0);
 			jd9.referenceAngle = hitter->GetAngle() - hidden->GetAngle();
 			(b2RevoluteJoint*)m_world->CreateJoint(&jd9);
-			
+	//spring between hitter and hidden static part
 			b2DistanceJointDef spring4;
 			spring4.Initialize(hidden, hitter ,b2Vec2(12.f,23.f), b2Vec2(12.f,20.5f));
 			spring4.collideConnected=true;
@@ -739,30 +703,7 @@ namespace cs296
 			 body2->SetLinearVelocity(b2Vec2(30,0));
 			 break;
 			  
-		  ////! Press 'z' to zoom out.
-		//case 'z':
-		  //view_zoom = b2Min(1.1f * view_zoom, 20.0f);
-		  //resize_cb(width, height);
-		  //break;
-		  
-		////! Press 'x' to zoom in.
-		//case 'x':
-		  //view_zoom = b2Max(0.9f * view_zoom, 0.02f);
-		  //resize_cb(width, height);
-		  //break;
-		  
-		////! Press 'r' to reset.
-		//case 'r':
-		  //delete test;
-		  //test = entry->create_fcn();
-		  //break;
-		  
-		  ////! Press 'p' to pause.
-		//case 'p':
-		  //settings.pause = !settings.pause;
-		  //break;
-		  
-		  //! The default case. Why is this needed?
+	  //! The default case. Why is this needed?
 			default:
 				cs296::base_sim_t::keyboard(key);
 		}
