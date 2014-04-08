@@ -113,4 +113,44 @@ myobjs/cs296_base.o: src/cs296_base.cpp src/cs296_base.hpp src/render.hpp \
  /usr/lib/gcc/x86_64-linux-gnu/4.7/include/stdarg.h \
  /usr/include/x86_64-linux-gnu/bits/sys_errlist.h \
  /usr/include/x86_64-linux-gnu/bits/stdio.h \
- /usr/include/x86_64-linux-gnu/bits/stdio2.h
+ /usr/include/x86_64-linux-gnu/bits/stdio2.h \
+ /usr/include/c++/4.7/iostream /usr/include/c++/4.7/ostream \
+ /usr/include/c++/4.7/ios /usr/include/c++/4.7/iosfwd \
+ /usr/include/c++/4.7/bits/stringfwd.h \
+ /usr/include/c++/4.7/bits/postypes.h /usr/include/c++/4.7/cwchar \
+ /usr/include/x86_64-linux-gnu/bits/wchar.h \
+ /usr/include/x86_64-linux-gnu/bits/wchar2.h \
+ /usr/include/c++/4.7/bits/char_traits.h \
+ /usr/include/c++/4.7/bits/localefwd.h \
+ /usr/include/c++/4.7/x86_64-linux-gnu/bits/c++locale.h \
+ /usr/include/c++/4.7/clocale /usr/include/locale.h \
+ /usr/include/x86_64-linux-gnu/bits/locale.h /usr/include/c++/4.7/cctype \
+ /usr/include/ctype.h /usr/include/c++/4.7/bits/ios_base.h \
+ /usr/include/c++/4.7/ext/atomicity.h \
+ /usr/include/c++/4.7/x86_64-linux-gnu/bits/gthr.h \
+ /usr/include/c++/4.7/x86_64-linux-gnu/bits/gthr-default.h \
+ /usr/include/pthread.h /usr/include/sched.h \
+ /usr/include/x86_64-linux-gnu/bits/sched.h \
+ /usr/include/x86_64-linux-gnu/bits/timex.h \
+ /usr/include/x86_64-linux-gnu/bits/setjmp.h \
+ /usr/include/c++/4.7/x86_64-linux-gnu/bits/atomic_word.h \
+ /usr/include/c++/4.7/bits/locale_classes.h /usr/include/c++/4.7/string \
+ /usr/include/c++/4.7/bits/ostream_insert.h \
+ /usr/include/c++/4.7/bits/cxxabi_forced.h \
+ /usr/include/c++/4.7/bits/stl_function.h \
+ /usr/include/c++/4.7/backward/binders.h \
+ /usr/include/c++/4.7/bits/range_access.h \
+ /usr/include/c++/4.7/bits/basic_string.h \
+ /usr/include/c++/4.7/bits/basic_string.tcc \
+ /usr/include/c++/4.7/bits/locale_classes.tcc \
+ /usr/include/c++/4.7/streambuf /usr/include/c++/4.7/bits/streambuf.tcc \
+ /usr/include/c++/4.7/bits/basic_ios.h \
+ /usr/include/c++/4.7/bits/locale_facets.h /usr/include/c++/4.7/cwctype \
+ /usr/include/wctype.h \
+ /usr/include/c++/4.7/x86_64-linux-gnu/bits/ctype_base.h \
+ /usr/include/c++/4.7/bits/streambuf_iterator.h \
+ /usr/include/c++/4.7/x86_64-linux-gnu/bits/ctype_inline.h \
+ /usr/include/c++/4.7/bits/locale_facets.tcc \
+ /usr/include/c++/4.7/bits/basic_ios.tcc \
+ /usr/include/c++/4.7/bits/ostream.tcc /usr/include/c++/4.7/istream \
+ /usr/include/c++/4.7/bits/istream.tcc

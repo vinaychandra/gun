@@ -43,6 +43,7 @@ namespace cs296
    * This is the documentation block for the constructor.
    */ 
   b2BodyDef t1,t2;
+  b2Body* box1;
   b2Body* body2;
   dominos_t::dominos_t()
   {
@@ -240,27 +241,27 @@ namespace cs296
       b2FixtureDef *fd1 = new b2FixtureDef;
       fd1->density = 50.0;
       fd1->friction = 0;
-      fd1->restitution = 1.f;
+      fd1->restitution = 0.f;
       fd1->shape = new b2PolygonShape;
       b2PolygonShape bs1;
-      bs1.SetAsBox(4,1.85, b2Vec2(-26.f,2.f), 0);
+      bs1.SetAsBox(4,1.9, b2Vec2(-26.f,2.f), 0);
       fd1->shape = &bs1;
       fd1->filter.categoryBits = 0x0010;
        
       b2FixtureDef *fd2 = new b2FixtureDef;
       fd2->density = 50.0;
       fd2->friction = 0;
-      fd2->restitution = 1.f;
+      fd2->restitution = 0.f;
       fd2->shape = new b2PolygonShape;
       b2PolygonShape bs2;
       bs2.SetAsBox(11,0.2, b2Vec2(-19.f,7.2f), 0);
       fd2->shape = &bs2;
       fd2->filter.categoryBits = 0x0010;
-      
+      //upper part 
       b2FixtureDef *fd3 = new b2FixtureDef;
       fd3->density = 50.0;
       fd3->friction = 0;
-      fd3->restitution = 1.f;
+      fd3->restitution = 0.f;
       b2Vec2 vs[4];
       vs[0].Set(-0.8f, 5.2f);
 	  vs[1].Set(0.f, 6.8f);
@@ -271,15 +272,15 @@ namespace cs296
 	  fd3->shape = &quad1;
 	  fd3->filter.categoryBits = 0x0010;
 	  fd3->filter.maskBits = 0x0111;
-	  
+	  //lower part
 	  b2FixtureDef *fd4 = new b2FixtureDef;
       fd4->density = 50.0;
       fd4->friction = 0;
-      fd4->restitution = 1.f;
-      vs[0].Set(-0.8f, 4.8f);
-	  vs[1].Set(10.f, 4.8f);
-      vs[2].Set(10.f, 4.0f);
-      vs[3].Set(0.f, 4.0f);
+      fd4->restitution = 0.f;
+      vs[0].Set(-0.8f, 4.5f);
+	  vs[1].Set(10.f, 4.5f);
+      vs[2].Set(10.f, 4.2f);
+      vs[3].Set(0.f, 4.2f);
 	  b2PolygonShape quad2;
 	  quad2.Set(vs,4);
 	  fd4->shape = &quad2;
@@ -287,15 +288,15 @@ namespace cs296
 	  fd4->filter.maskBits = 0x0111;
 	  //stick fixture
 	  b2FixtureDef *fd5 = new b2FixtureDef;
-      fd5->density = 50.0;
+      fd5->density = 0.5;
       fd5->friction = 0;
-      fd5->restitution = 1.f;
+      fd5->restitution = 0.f;
       b2Vec2 v[5];
-      v[0].Set(0.2f, 4.8f);
-      v[1].Set(-0.f, 5.f);
+      v[0].Set(0.2f, 4.5f);
+      v[1].Set(0.f, 4.8f);
 	  v[2].Set(0.2f, 5.2f);
       v[3].Set(10.4f, 5.2f);
-      v[4].Set(10.4f, 4.8f);
+      v[4].Set(10.4f, 4.5f);
 	  b2PolygonShape pent;
 	  pent.Set(v,5);
 	  fd5->shape = &pent;
@@ -316,7 +317,7 @@ namespace cs296
       invibd->fixedRotation = true;
       b2Body* invi = m_world->CreateBody(invibd);
       
-      b2Body* box1 = m_world->CreateBody(bd);
+      box1 = m_world->CreateBody(bd);
       box1->CreateFixture(fd1);
       box1->CreateFixture(fd2);
       box1->CreateFixture(fd3);
@@ -326,15 +327,15 @@ namespace cs296
       b2DistanceJointDef internal;
       internal.Initialize(box1, stick, b2Vec2(9.8,25.3), stick->GetWorldCenter());
       internal.collideConnected=true;
-      internal.frequencyHz = 1.0f;
+      internal.frequencyHz = 0.5f;
       internal.dampingRatio = 1.0f;
       m_world->CreateJoint(&internal);
       //spring necessary for the reload part.
       b2DistanceJointDef spring1;
       spring1.Initialize(box1, invi, b2Vec2(-22,22), invi->GetWorldCenter());
       spring1.collideConnected=true;
-      spring1.frequencyHz = 0.04f;
-      spring1.dampingRatio = 0.0f;
+      spring1.frequencyHz = 0.07f;
+      spring1.dampingRatio = 0.1f;
       m_world->CreateJoint(&spring1);
         
      }
@@ -344,7 +345,7 @@ namespace cs296
 	      //shell fixture
 		  b2FixtureDef *sf1 = new b2FixtureDef;
 		  sf1->density = 5.0;
-		  sf1->friction = 0.3;
+		  sf1->friction = 0;
 		  sf1->restitution = 0.f;
 		  b2Vec2 vs[4];
           vs[0].Set(5.2f, 1.0f);
@@ -358,7 +359,7 @@ namespace cs296
 		  
 		  b2FixtureDef *sf2 = new b2FixtureDef;
 		  sf2->density = 5.0;
-		  sf2->friction = 0.3;
+		  sf2->friction = 0.1;
 		  sf2->restitution = 0.f;
 		  vs[0].Set(5.2f, -1.4f);
           vs[1].Set(0.3f, -1.4f);
@@ -371,7 +372,7 @@ namespace cs296
 		  
 		  b2FixtureDef *sf3 = new b2FixtureDef;
 		  sf3->density = 5.0;
-		  sf3->friction = 0.3;
+		  sf3->friction = 0;
 		  sf3->restitution = 0.f;
 		  vs[0].Set(5.2f, 1.0f);
           vs[1].Set(4.7f, 1.0f);
@@ -399,7 +400,7 @@ namespace cs296
 		  bf->shape = &bs;
 		  bf->filter.categoryBits = 0x0010;
 		  //creating bullet bodies
-	  for(int i=0; i<1 ;i++){
+	  for(int i=0; i<3 ;i++){
 		  b2BodyDef *bulletDef = new b2BodyDef;
           bulletDef->type = b2_dynamicBody;
           bulletDef->position.Set(0.4,22-3.0*i);
@@ -417,24 +418,6 @@ namespace cs296
 		  shell->CreateFixture(sf3);
 		  
 	}
-		  b2BodyDef *bulletDef = new b2BodyDef;
-          bulletDef->type = b2_staticBody;
-          bulletDef->position.Set(0,-20);
-          bulletDef->fixedRotation = true;
-          
-          b2Body* bullet = m_world->CreateBody(bulletDef);
-		  bullet->CreateFixture(bf);
-		  
-		  
-		  b2BodyDef *shellDef = new b2BodyDef;
-          shellDef->type = b2_staticBody;
-          shellDef->position.Set(2,-20);
-          b2Body* shell = m_world->CreateBody(shellDef);
-		  shell->CreateFixture(sf1);
-		  shell->CreateFixture(sf2);
-		  shell->CreateFixture(sf3);
-		  
-		  
       
 	}
 	
@@ -452,7 +435,7 @@ namespace cs296
       bd->type = b2_dynamicBody;
       bd->position.Set(0,20);
       bd->fixedRotation = true;
-      
+      //base 
       b2FixtureDef *fd1 = new b2FixtureDef;
       fd1->density = 10.0;
       fd1->friction = 0;
@@ -470,7 +453,7 @@ namespace cs296
       b2DistanceJointDef spring1;
       spring1.Initialize(box1, invi, box1->GetWorldCenter(), invi->GetWorldCenter());
       spring1.collideConnected=true;
-      spring1.frequencyHz = 2.0f;
+      spring1.frequencyHz = 1.0f;
       spring1.dampingRatio = 1.0f;
       spring1.length = 18.7f;
       m_world->CreateJoint(&spring1);
@@ -485,8 +468,7 @@ namespace cs296
 			shape.Set(b2Vec2(50.0f, 0.0f), b2Vec2(-50.0f, 0.0f));
 			ground->CreateFixture(&shape, 0.0f);
 
-			
-	//circle gear in between
+
 			b2RevoluteJoint* m_joint1;
 			b2PrismaticJoint* m_joint2;
 			b2PrismaticJoint* m_joint3;
@@ -618,7 +600,7 @@ namespace cs296
 			jd5.ratio = -1.0f / circle1.m_radius;
 			(b2GearJoint*)m_world->CreateJoint(&jd5);
 			
-			body2->SetLinearVelocity(b2Vec2(30,0));
+			//body2->SetLinearVelocity(b2Vec2(30,0));
 	//spring between hidden static part and trigger
 		    b2DistanceJointDef spring3;
 			spring3.Initialize(body2, hidden ,b2Vec2(1.f,22.f), b2Vec2(8.f,22.f));
@@ -629,11 +611,11 @@ namespace cs296
 	// lock 
 			b2BodyDef t5;
 			t5.type = b2_dynamicBody;
-			t5.position.Set(10.f, 19.5f);
+			t5.position.Set(10.f, 19.f);
 			b2Body* lock = m_world->CreateBody(&t5);
 			b2FixtureDef *tf5 = new b2FixtureDef;
 			b2PolygonShape bs5;
-			bs5.SetAsBox(2.0,0.5);
+			bs5.SetAsBox(1.0,0.5);
 			tf5->density=1.0f;
 			tf5->shape = &bs5;
 			tf5->filter.maskBits=0x0100;
@@ -652,7 +634,7 @@ namespace cs296
 	//the hitter part
 			b2BodyDef t6;
 			t6.type = b2_dynamicBody;
-			t6.position.Set(15.f, 20.5f);
+			t6.position.Set(15.f, 22.f);
 			b2Body* hitter = m_world->CreateBody(&t6);
 			
 			b2FixtureDef *tf61 = new b2FixtureDef;
@@ -686,7 +668,7 @@ namespace cs296
 			(b2RevoluteJoint*)m_world->CreateJoint(&jd9);
 	//spring between hitter and hidden static part
 			b2DistanceJointDef spring4;
-			spring4.Initialize(hidden, hitter ,b2Vec2(12.f,23.f), b2Vec2(12.f,20.5f));
+			spring4.Initialize(hidden, hitter ,b2Vec2(10.f,23.f), b2Vec2(12.f,20.5f));
 			spring4.collideConnected=true;
 			spring4.frequencyHz = 0.2f;
 			spring4.length = 15.f;
@@ -702,6 +684,11 @@ namespace cs296
 			case 's':
 			 body2->SetLinearVelocity(b2Vec2(30,0));
 			 break;
+			 
+			case 'w':
+			 box1->SetLinearVelocity(b2Vec2(15,0));
+			 break;
+			 
 			  
 	  //! The default case. Why is this needed?
 			default:

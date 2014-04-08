@@ -18,6 +18,7 @@
 
 #include "cs296_base.hpp"
 #include <cstdio>
+#include "iostream"
 using namespace std;
 using namespace cs296;
 
@@ -88,7 +89,6 @@ void base_sim_t::draw_title(int x, int y, const char *string)
 void base_sim_t::step(settings_t* settings)
 {
   float32 time_step = settings->hz > 0.0f ? 1.0f / settings->hz : float32(0.0f);
-
   if (settings->pause)
     {
       if (settings->single_step)
