@@ -33,6 +33,7 @@
 #endif
 
 #include <cstring>
+#include "iostream"
 using namespace std;
 
 #include "dominos.hpp"
@@ -45,6 +46,15 @@ namespace cs296
   b2BodyDef t1,t2;
   b2Body* box1;
   b2Body* body2;
+  b2Body* hitter;
+  b2Body* stick;
+  int shellcount=5;
+  b2Body* shell[5];
+  b2Body* bullet[5];
+  b2Body* brick[40][5];
+  b2Body *ground;
+
+  
   dominos_t::dominos_t()
   {
     
@@ -63,7 +73,7 @@ namespace cs296
       f1->restitution = 0.f;
       f1->shape = new b2EdgeShape;
       b2EdgeShape e1;
-      e1.Set(b2Vec2(-30.f, 7.f), b2Vec2(3.5f,7.f));
+      e1.Set(b2Vec2(-30.f, 7.f), b2Vec2(5.0f,7.f));
       f1->shape = &e1;
       f1->filter.maskBits = 0x0010;
       f1->filter.categoryBits = 0x0011;
@@ -161,7 +171,7 @@ namespace cs296
       f7->restitution = 0.f;
       f7->shape = new b2PolygonShape;
       b2PolygonShape p7;
-      p7.SetAsBox(0.2,9., b2Vec2(8.0f,-5.f), 0);
+      p7.SetAsBox(0.2,9.3, b2Vec2(8.0f,-5.9f), 0);
       f7->shape = &p7;
       f7->filter.maskBits = 0x0010;
       f7->filter.categoryBits = 0x0017;
@@ -212,6 +222,18 @@ namespace cs296
       bs11.Set(b2Vec2(-30.f, 4.f), b2Vec2(-30.f, 3.f));
       fd11->shape = &bs11;
       
+      b2FixtureDef *shellescape = new b2FixtureDef;
+      shellescape->density = 10.0;
+      shellescape->friction = 0.5;
+      shellescape->restitution = 0.f;
+      shellescape->shape = new b2EdgeShape;
+      b2EdgeShape bs12;
+      bs12.Set(b2Vec2(8.f, 3.7f), b2Vec2(10.f, 5.3f));
+      shellescape->shape = &bs12;
+      shellescape->filter.maskBits = 0x8000;
+      shellescape->filter.categoryBits = 0x8000;
+      
+      
       b2Body* box1 = m_world->CreateBody(bd);
       box1->CreateFixture(f1);
       box1->CreateFixture(f2);
@@ -226,7 +248,7 @@ namespace cs296
       box1->CreateFixture(ac1);
       box1->CreateFixture(ac2);
       box1->CreateFixture(fd11);
-     
+      box1->CreateFixture(shellescape);
 
   }
   
@@ -254,7 +276,7 @@ namespace cs296
       fd2->restitution = 0.f;
       fd2->shape = new b2PolygonShape;
       b2PolygonShape bs2;
-      bs2.SetAsBox(11,0.2, b2Vec2(-19.f,7.2f), 0);
+      bs2.SetAsBox(7,0.2, b2Vec2(-23.f,7.2f), 0);
       fd2->shape = &bs2;
       fd2->filter.categoryBits = 0x0010;
       //upper part 
@@ -270,8 +292,8 @@ namespace cs296
 	  b2PolygonShape quad1;
 	  quad1.Set(vs,4);
 	  fd3->shape = &quad1;
-	  fd3->filter.categoryBits = 0x0010;
-	  fd3->filter.maskBits = 0x0111;
+	  fd3->filter.categoryBits = 0x0110;
+	  fd3->filter.maskBits = 0x1010;
 	  //lower part
 	  b2FixtureDef *fd4 = new b2FixtureDef;
       fd4->density = 50.0;
@@ -284,8 +306,8 @@ namespace cs296
 	  b2PolygonShape quad2;
 	  quad2.Set(vs,4);
 	  fd4->shape = &quad2;
-	  fd4->filter.categoryBits = 0x0010;
-	  fd4->filter.maskBits = 0x0111;
+	  fd4->filter.categoryBits = 0x0110;
+	  fd4->filter.maskBits = 0x1010;
 	  //stick fixture
 	  b2FixtureDef *fd5 = new b2FixtureDef;
       fd5->density = 0.5;
@@ -307,7 +329,7 @@ namespace cs296
       stickbd->type = b2_dynamicBody;
       stickbd->position.Set(0,20);
       stickbd->fixedRotation = true;
-	  b2Body* stick = m_world->CreateBody(stickbd);
+	  stick = m_world->CreateBody(stickbd);
       stick->CreateFixture(fd5);
       stick->SetLinearVelocity(b2Vec2(-20,0));
       //arbit invisible body
@@ -324,12 +346,18 @@ namespace cs296
       box1->CreateFixture(fd4);
       box1->SetLinearVelocity(b2Vec2(4,0));
       //spring between stick and invisible point
-      b2DistanceJointDef internal;
-      internal.Initialize(box1, stick, b2Vec2(9.8,25.3), stick->GetWorldCenter());
-      internal.collideConnected=true;
-      internal.frequencyHz = 0.5f;
-      internal.dampingRatio = 1.0f;
-      m_world->CreateJoint(&internal);
+      b2DistanceJointDef internal1;
+      internal1.Initialize(box1, stick, b2Vec2(9.8,25.3), stick->GetWorldCenter());
+      internal1.collideConnected=true;
+      internal1.frequencyHz = 0.7f;
+      internal1.dampingRatio = 1.0f;
+      m_world->CreateJoint(&internal1);
+      b2DistanceJointDef internal2;
+      internal2.Initialize(box1, stick, b2Vec2(9.8,24.0), stick->GetWorldCenter());
+      internal2.collideConnected=true;
+      internal2.frequencyHz = 0.7f;
+      internal2.dampingRatio = 1.0f;
+      m_world->CreateJoint(&internal2);
       //spring necessary for the reload part.
       b2DistanceJointDef spring1;
       spring1.Initialize(box1, invi, b2Vec2(-22,22), invi->GetWorldCenter());
@@ -355,7 +383,7 @@ namespace cs296
 		  b2PolygonShape s1;
 		  s1.Set(vs,4);
 		  sf1->shape = &s1;
-		  sf1->filter.categoryBits = 0x0010;
+		  sf1->filter.categoryBits = 0x8010;
 		  
 		  b2FixtureDef *sf2 = new b2FixtureDef;
 		  sf2->density = 5.0;
@@ -368,7 +396,7 @@ namespace cs296
 		  b2PolygonShape s2;
 		  s2.Set(vs,4);
 		  sf2->shape = &s2;
-		  sf2->filter.categoryBits = 0x0010;
+		  sf2->filter.categoryBits = 0x8010;
 		  
 		  b2FixtureDef *sf3 = new b2FixtureDef;
 		  sf3->density = 5.0;
@@ -381,7 +409,7 @@ namespace cs296
 		  b2PolygonShape s3;
 		  s3.Set(vs,4);
 		  sf3->shape = &s3;  
-		  sf3->filter.categoryBits = 0x0010;
+		  sf3->filter.categoryBits = 0x8010;
 		  
 		  //bullet fixture
 		  b2FixtureDef *bf = new b2FixtureDef;
@@ -400,22 +428,28 @@ namespace cs296
 		  bf->shape = &bs;
 		  bf->filter.categoryBits = 0x0010;
 		  //creating bullet bodies
-	  for(int i=0; i<3 ;i++){
+	  for(int i=0; i<shellcount ;i++){
 		  b2BodyDef *bulletDef = new b2BodyDef;
           bulletDef->type = b2_dynamicBody;
           bulletDef->position.Set(0.4,22-3.0*i);
           bulletDef->fixedRotation = true;
           
-          b2Body* bullet = m_world->CreateBody(bulletDef);
-		  bullet->CreateFixture(bf);
+          bullet[i] = m_world->CreateBody(bulletDef);
+		  bullet[i]->CreateFixture(bf);
 		  
 		  b2BodyDef *shellDef = new b2BodyDef;
           shellDef->type = b2_dynamicBody;
           shellDef->position.Set(1.9,22-3.0*i);
-          b2Body* shell = m_world->CreateBody(shellDef);
-		  shell->CreateFixture(sf1);
-		  shell->CreateFixture(sf2);
-		  shell->CreateFixture(sf3);
+          shell[i] = m_world->CreateBody(shellDef);
+		  shell[i]->CreateFixture(sf1);
+		  shell[i]->CreateFixture(sf2);
+		  shell[i]->CreateFixture(sf3);
+		  
+		  //b2DistanceJointDef binderdef;
+		  //binderdef.Initialize(shell[i], bullet[i], bullet[i]->GetWorldCenter(), shell[i]->GetWorldCenter());
+		  //binderdef.collideConnected=true;
+		  //binderdef.frequencyHz = 10.0f;
+		  //binder[i] = m_world->CreateJoint(&binderdef);
 		  
 	}
       
@@ -455,17 +489,17 @@ namespace cs296
       spring1.collideConnected=true;
       spring1.frequencyHz = 1.0f;
       spring1.dampingRatio = 1.0f;
-      spring1.length = 18.7f;
+      spring1.length = 18.8f;
       m_world->CreateJoint(&spring1);
   }
   //trigger part
   {
 	  	//the ground part
 			b2BodyDef bd;
-			b2Body *ground = m_world->CreateBody(&bd);
+			ground = m_world->CreateBody(&bd);
 
 			b2EdgeShape shape;
-			shape.Set(b2Vec2(50.0f, 0.0f), b2Vec2(-50.0f, 0.0f));
+			shape.Set(b2Vec2(100.0f, -20.0f), b2Vec2(-200.0f, -20.0f));
 			ground->CreateFixture(&shape, 0.0f);
 
 
@@ -635,7 +669,7 @@ namespace cs296
 			b2BodyDef t6;
 			t6.type = b2_dynamicBody;
 			t6.position.Set(15.f, 22.f);
-			b2Body* hitter = m_world->CreateBody(&t6);
+			hitter = m_world->CreateBody(&t6);
 			
 			b2FixtureDef *tf61 = new b2FixtureDef;
 			b2FixtureDef *tf62 = new b2FixtureDef;
@@ -676,6 +710,28 @@ namespace cs296
 			
 			m_world->CreateJoint(&spring4);
   }
+  
+  {//bricks
+  
+      b2FixtureDef *brf = new b2FixtureDef;
+      brf->density = 1.0;
+      brf->friction = 0.5;
+      brf->restitution = 0.0f;
+      brf->shape = new b2PolygonShape;
+      b2PolygonShape cons;
+      cons.SetAsBox(1.0,1.0, b2Vec2(7.0,2.6), 0);
+      brf->shape = &cons;
+      for(int i = 0; i< 40; i++){
+		  for(int j = 0 ;j < 5; j++){
+			    b2BodyDef* brickDef = new b2BodyDef;
+			    brickDef->type = b2_dynamicBody;
+				brickDef->position.Set(-150 + 2.5*j ,-20+ 2.5*i);
+				brick[i][j] = m_world->CreateBody(brickDef);
+				brick[i][j]->CreateFixture(brf);
+		}
+	  }  
+			  
+  }
  }
 	void dominos_t::keyboard(unsigned char key)
 	{
@@ -689,12 +745,46 @@ namespace cs296
 			 box1->SetLinearVelocity(b2Vec2(15,0));
 			 break;
 			 
-			  
+		    case 'b':
+		    for(int i = 0; i< 40; i++){
+				for(int j = 0 ;j < 5; j++){
+			    brick[i][j]->SetTransform(b2Vec2(-150 + 2.5*j ,-20+ 2.5*i),ground->GetAngle());
+			    brick[i][j]->SetLinearVelocity(b2Vec2(0.,0.));
+			}
+	  } 
+		     
 	  //! The default case. Why is this needed?
 			default:
 				cs296::base_sim_t::keyboard(key);
 		}
 	}
+	
+			void dominos_t::step(settings_t* settings){
+			for(b2Contact* contact = m_world->GetContactList();contact;contact=contact->GetNext())
+			{
+				if(contact != NULL)
+				{
+					b2Body* a = contact->GetFixtureA()->GetBody();
+					b2Body* b = contact->GetFixtureB()->GetBody();
+					//cout << (a == stick) << (b == hitter) << endl;
+						if(((a == hitter) && (b == stick)) || ((a == stick) && (b == hitter))){
+						if(contact -> IsTouching())
+							{
+								int i = int((25.5  - shell[shellcount-1]->GetPosition().y)/2.5);
+								cout << i;
+								cout << "contact" << endl;
+								bullet[shellcount-1-i]->SetLinearVelocity(b2Vec2(-200,0));
+								box1->SetLinearVelocity(b2Vec2(60,0));
+								stick->SetLinearVelocity(b2Vec2(60,0));;
+								shell[shellcount-1-i]->SetLinearVelocity(b2Vec2(60,0));
+								
+								
+							}
+						}
+				}
+			}
+			cs296::base_sim_t::step(settings);
+		}
 
   sim_t *sim = new sim_t("Dominos", dominos_t::create);
 }

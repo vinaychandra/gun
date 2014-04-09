@@ -35,6 +35,7 @@ namespace cs296
     
     dominos_t();
     void keyboard(unsigned char key);
+    void step(settings_t* settings);
     
     static base_sim_t* create()
     {
