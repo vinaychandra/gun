@@ -19,9 +19,9 @@ MY_LIB = libCS296test
 ######################################
 # Project Name (generate executable with this name)
 TARGET = cs296_31_exe
-TARGET2 = cs296_31_exelib
+#TARGET2 = cs296_31_exelib
 TARGET_PATH = $(BINDIR)/$(TARGET)
-TARGET_PATH2 = $(BINDIR)/$(TARGET2)
+#TARGET_PATH2 = $(BINDIR)/$(TARGET2)
 
 # Project Paths
 PROJECT_ROOT=./
@@ -31,6 +31,7 @@ OBJDIR = $(PROJECT_ROOT)/myobjs
 BINDIR = $(PROJECT_ROOT)/mybins
 LIBDIR = $(PROJECT_ROOT)/mylibs
 DOCDIR = $(PROJECT_ROOT)/doc
+INSTALLDIR = $(PROJECT_ROOT)/install
 
 # Library Paths
 BOX2D_ROOT=$(EXTERNAL_ROOT)
@@ -148,6 +149,29 @@ doc:
 	@$(DOXYGEN) $(DOCDIR)/Doxyfile 2 > /dev/null
 	@$(ECHO) "Done"
 
+dist: distclean
+	@cd ../;\
+	tar czf cs296_g31_project.tar.gz gun
+
+install: doc exe report
+	@$(RM) -rf $(INSTALLDIR)
+	@mkdir $(INSTALLDIR)
+	@cp -r mybins/ $(INSTALLDIR)
+	@cp -r doc/ $(INSTALLDIR)
+	@cp -r details/ $(INSTALLDIR)
+	@cp -r scripts/ $(INSTALLDIR)
+
+report: 
+	@cd doc;\
+	pdflatex project;\
+	bibtex project; \
+	pdflatex project; \
+	bibtex project;\
+	pdflatex project; \
+	rm project.aux project.log project.blg project.bbl;
+	@python3 scripts/g31_gen_html.py; \
+
+
 clean:
 	@$(ECHO) -n "Cleaning up..."
 	@$(RM) -rf $(OBJDIR) $(LIBDIR) *~ $(DEPS) $(SRCDIR)/*~
@@ -155,6 +179,6 @@ clean:
 
 distclean: clean
 	@$(RM) -rf $(BINDIR) $(DOCDIR)/html $(LIBDIR)
-	@$(RM) -Rf $(BOX2D_SRCDIR)/Box2D
-	@$(RM) -Rf $(BOX2D_ROOT)/lib $(BOX2D_ROOT)/include
+	@$(RM) -Rf $(BOX2D_SRCDIR)/Box2D doc/project.pdf $(INSTALLDIR)
+	@$(RM) -Rf $(BOX2D_ROOT)/lib $(BOX2D_ROOT)/include doc/g31_lab09_report.html
 

@@ -116,7 +116,7 @@ data = answer
 data = ''.join(data)
 
 #author fix
-data = data.replace("\\author{",'<center style="font-size:15px;">',1).replace("}","</center><br>",1)
+data = data.replace("\\author{",'<center style="font-size:15px;">',1).replace("}","<\center><br>",1)
 data = data.replace("\\bibliographystyle{plain}\\bibliography{project}",'')
 
 

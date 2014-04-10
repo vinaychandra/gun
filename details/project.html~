@@ -54,11 +54,11 @@
 
 		<div>
 			<imgdiv class="img1" style="height: auto; border:1px green solid">
-				<img src="1.jpg">
+				<img src="images/gun.png">
 			</imgdiv>
 
 			<imgdiv class="img2" style="height: auto; border:1px blue solid">
-				<img src="2.jpg" >
+				<img src="images/static.png" >
 			</imgdiv>
 		</div>
 
@@ -66,11 +66,11 @@
 
 		<div>
 			<imgdiv class="img1" style="height: auto; border:1px green solid">
-				<img src="3.jpg">
+				<img src="images/bullets.png">
 			</imgdiv>
 
 			<imgdiv class="img2" style="height: auto; border:1px blue solid">
-				<img src="4.jpg" >
+				<img src="images/stick.png" >
 			</imgdiv>
 		</div>
 
@@ -78,26 +78,13 @@
 
 		<div>
 			<imgdiv class="img1" style="height: auto; border:1px green solid">
-				<img src="5.jpg">
+				<img src="images/trigger.png">
 			</imgdiv>
 
 			<imgdiv class="img2" style="height: auto; border:1px blue solid">
-				<img src="6.jpg" >
+				<img src="images/bullet.png" >
 			</imgdiv>
 		</div>
-
-		<br>
-		<p class="sansserif" style="margin-bottom: -1px;">
-		Links
-		</p>
-		<p class="data" style="margin-bottom : -1px;">
-			Below are the links of certain details of the Box2D simulation we made.
-		</p>
-		<ul>
-			<li><a href="#" target="blank">Link 1</a></li>
-			<li><a href="#" target="blank">Link 2</a></li>
-		</ul>
-
 
 		<br>
 		<p class="sansserif" style="margin-bottom: -1px;">
