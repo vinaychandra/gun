@@ -19,9 +19,9 @@ MY_LIB = libCS296test
 ######################################
 # Project Name (generate executable with this name)
 TARGET = cs296_31_exe
-TARGET2 = cs296_31_exelib
+#TARGET2 = cs296_31_exelib
 TARGET_PATH = $(BINDIR)/$(TARGET)
-TARGET_PATH2 = $(BINDIR)/$(TARGET2)
+#TARGET_PATH2 = $(BINDIR)/$(TARGET2)
 
 # Project Paths
 PROJECT_ROOT=./
@@ -31,6 +31,7 @@ OBJDIR = $(PROJECT_ROOT)/myobjs
 BINDIR = $(PROJECT_ROOT)/mybins
 LIBDIR = $(PROJECT_ROOT)/mylibs
 DOCDIR = $(PROJECT_ROOT)/doc
+INSTALLDIR = $(PROJECT_ROOT)/install
 
 # Library Paths
 BOX2D_ROOT=$(EXTERNAL_ROOT)
@@ -83,7 +84,7 @@ MAIN_OBJ  = $(OBJDIR)/main.o
 #####################################
 .PHONY: all setup doc clean distclean
 
-all: setup exelib
+all: setup exe
 
 setup:
 	@$(ECHO) "Setting up compilation..."
@@ -142,6 +143,33 @@ exe : setup $(OBJS)
 	fi;
 	@$(RM) -f temp.log temp.e
 
+doc:
+	@$(ECHO) -n "Generating Doxygen Documentation ...  "
+	@$(RM) -rf doc/html
+	@$(DOXYGEN) $(DOCDIR)/Doxyfile 2 > /dev/null
+	@$(ECHO) "Done"
+
+dist: distclean
+	@cd ../;\
+	tar czf cs296_g31_project.tar.gz gun
+
+install: doc exe report
+	@$(RM) -rf $(INSTALLDIR)
+	@mkdir $(INSTALLDIR)
+	@cp -r mybins/ $(INSTALLDIR)
+	@cp -r doc/ $(INSTALLDIR)
+	@cp -r details/ $(INSTALLDIR)
+	@cp -r scripts/ $(INSTALLDIR)
+
+report: 
+	@cd doc;\
+	pdflatex project;\
+	bibtex project; \
+	pdflatex project; \
+	bibtex project;\
+	pdflatex project; \
+	rm project.aux project.log project.blg project.bbl;
+	@python3 scripts/g31_gen_html.py; \
 
 
 clean:
@@ -151,45 +179,6 @@ clean:
 
 distclean: clean
 	@$(RM) -rf $(BINDIR) $(DOCDIR)/html $(LIBDIR)
-	@$(RM) -Rf $(BOX2D_SRCDIR)/Box2D
-	@$(RM) -Rf $(BOX2D_ROOT)/lib $(BOX2D_ROOT)/include
+	@$(RM) -Rf $(BOX2D_SRCDIR)/Box2D doc/project.pdf $(INSTALLDIR)
+	@$(RM) -Rf $(BOX2D_ROOT)/lib $(BOX2D_ROOT)/include doc/g31_lab09_report.html
 
-usestatic: $(OBJS)
-ifeq (FALSE, $(SHARED_LIB))
-	@$(ECHO) "Creating a Static Library..."
-	@$(AR) -rvc $(LIBDIR)/$(MY_LIB).a $(OBJS2)
-	@$(ECHO) "Creation done"
-endif
-
-
-usesdynamic: $(OBJS)
-ifeq (TRUE, $(SHARED_LIB))
-	@$(ECHO) "Creating a dynamic Library..."
-	@$(CC) -shared -o $(LIBDIR)/$(MY_LIB).so $(OBJS2)
-	@$(ECHO) "Creation done"
-endif 
-
-exelib: setup usestatic usesdynamic
-	@$(PRINTF) "$(MESG_COLOR)Building executable:$(NO_COLOR) $(FILE_COLOR) %16s$(NO_COLOR)" "$(notdir $(TARGET_PATH2))"
-ifeq (FALSE, $(SHARED_LIB))
-#static libraries
-	@$(CC) -o $(TARGET_PATH2) $(LDFLAGS) $(MAIN_OBJ) $(LIBDIR)/$(MY_LIB).a $(LIBS) -L$(LIBDIR) 2> temp.log || touch temp.err
-	@if test -e temp.err; \
-	then $(PRINTF) $(ERR_FMT) $(ERR_STRING) && $(CAT) temp.log; \
-	elif test -s temp.log; \
-	then $(PRINTF) $(WARN_FMT) $(WARN_STRING) && $(CAT) temp.log; \
-	else $(PRINTF) $(OK_FMT) $(OK_STRING); \
-	fi;
-	@$(RM) -f temp.log temp.e
-else
-#dynamic libraries
-	@$(CC) -o $(TARGET_PATH2) $(MAIN_OBJ) $(LDFLAGS) $(LIBDIR)/$(MY_LIB).so $(LIBS)   2> temp.log || touch temp.err
-	@if test -e temp.err; \
-	then $(PRINTF) $(ERR_FMT) $(ERR_STRING) && $(CAT) temp.log; \
-	elif test -s temp.log; \
-	then $(PRINTF) $(WARN_FMT) $(WARN_STRING) && $(CAT) temp.log; \
-	else $(PRINTF) $(OK_FMT) $(OK_STRING); \
-	fi;
-	@$(RM) -f temp.log temp.e
-endif
-	@$(PRINTF) "$(MESG_COLOR)Build complete:$(NO_COLOR) $(FILE_COLOR) %21s$(NO_COLOR)\n" "$(notdir $(TARGET_PATH2))"

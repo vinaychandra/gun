@@ -1,0 +1,23 @@
+h2{
+	color:blue;
+	text-align: center;
+}
+
+section
+{	
+	text-decoration: bold;
+	color: red;
+	text-align: center;
+	text-transform: capitalize;
+}
+
+subsection
+{	
+	color: blue;
+	text-align: center;
+}
+
+body{
+	background-color: #CCCCFF
+	/*font-family:"Times New Roman";*/
+}
