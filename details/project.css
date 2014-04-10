@@ -114,7 +114,7 @@ p.sansserif
 	text-align: right;
 	color: black;
 }
-
+/*
 imgdiv {
 	display: inline-block;
 	white-space: nowrap;
@@ -125,9 +125,9 @@ imgdiv.img{
 
 	max-width: 100%;
 	height: auto;
-	width: auto\9; /* ie8 */
+	/*width: auto\9; /* ie8 */
+/*
 }
-
 .img1,.img2{
 	width:49%;
-}
+}*/
