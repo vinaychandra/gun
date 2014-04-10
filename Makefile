@@ -142,7 +142,11 @@ exe : setup $(OBJS)
 	fi;
 	@$(RM) -f temp.log temp.e
 
-
+doc:
+	@$(ECHO) -n "Generating Doxygen Documentation ...  "
+	@$(RM) -rf doc/html
+	@$(DOXYGEN) $(DOCDIR)/Doxyfile 2 > /dev/null
+	@$(ECHO) "Done"
 
 clean:
 	@$(ECHO) -n "Cleaning up..."
